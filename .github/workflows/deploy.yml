@@ -30,6 +30,7 @@ jobs:
           
           cp -r assets dist/
           cp -r templates dist/
+          cp README.md dist/
           
           ls -R dist/
 
@@ -38,5 +39,5 @@ jobs:
         with:
           branch: release
           folder: dist
-          clean: false
+          clean: true
           single-commit: false
