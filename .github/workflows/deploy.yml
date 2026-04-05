@@ -38,5 +38,5 @@ jobs:
         with:
           branch: release
           folder: dist
-          clean: true
+          clean: false
           single-commit: false
