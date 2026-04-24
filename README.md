@@ -26,28 +26,15 @@ We believe motion should be part of the physics of the page, not a heavy script.
 
 ---
 
-## 🚀 Implementation Patterns
-
-### Pattern A: Immersive Exhibition
-Ideal for showcasing projects on sites like [`barrys27.github.io`](https://barrys27.github.io):
-
-```scss
-<div class="card fade-in">
-    <img src="cover.jpg" class="cover">
-    <div style="padding: 24px;">
-        <h3>Iris Dataset Analysis</h3>
-        <p>A study in data visualization and species relationships.</p>
-    </div>
-</div>
-```
-
----
-
 ## 🛠 Getting Started
 
-1. **Install**: `npm install @barrys27/ui`
-2. **Import**: Add the essentials to your Scss entry point:
+**Install:**
+```bash
+bun add @barrys27/ui
+# or: npm install @barrys27/ui
+```
 
+**Import SCSS:**
 ```scss
 @use '@barrys27/ui/base';
 @use '@barrys27/ui/card';
@@ -55,11 +42,49 @@ Ideal for showcasing projects on sites like [`barrys27.github.io`](https://barry
 @use '@barrys27/ui/row';
 ```
 
+**CDN — fonts:**
+```css
+@import url('https://cdn.jsdelivr.net/gh/asong56/acdn@release/assets/fonts/fonts.css');
+```
+
+**CDN — Jinja2 macros:**
+```
+https://cdn.jsdelivr.net/gh/asong56/acdn@release/templates/macros.html
+```
+
+**CDN — Stroma SEO library (compiled ESM):**
+```
+https://cdn.jsdelivr.net/gh/asong56/acdn@branch-stroma/stroma.js
+```
+
 ---
 
-Author
-Bairu Song
-Lexington High School
-Focusing on Data Science and Business.
+## 📦 Repository Structure
+
+```
+acdn/
+├── src/
+│   ├── scss/           @barrys27/ui SCSS source
+│   └── js/
+│       ├── stroma.js   Stroma SEO library source
+│       └── stroma.d.ts TypeScript declarations
+├── assets/
+│   ├── fonts/          Variable web fonts + fonts.css
+│   ├── img/            SVG / PNG assets
+│   └── lic/            License texts
+└── templates/
+    └── macros.html     Jinja2 UI macros
+```
+
+**Branches:**
+
+| Branch | Contents | Trigger |
+|---|---|---|
+| `main` | Source files | — |
+| `release` | Built CSS + assets (CDN) | push to `main` (scss/assets changed) |
+| `npm` | npm publish payload | tag `v*` |
+| `branch-stroma` | Compiled Stroma (ESM + CJS + types) | push to `main` (stroma.js changed) |
+
 ---
-Inspired by iOS Human Interface Guidelines.
+
+Author: asong56 — Inspired by iOS Human Interface Guidelines.
