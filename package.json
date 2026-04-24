@@ -22,9 +22,10 @@
     "README.md"
   ],
   "scripts": {
-    "build": "sass --style=compressed src/scss:static/css",
-    "watch": "sass --watch src/scss:static/css",
-    "prepublishOnly": "npm run build"
+    "build":          "sass --style=compressed src/scss:static/css",
+    "watch":          "sass --watch src/scss:static/css",
+    "build:stroma":   "tsup src/js/stroma.js --format esm,cjs --dts --minify --clean --out-dir dist/stroma",
+    "prepublishOnly": "bun run build"
   },
   "keywords": [
     "css",
@@ -39,9 +40,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/BarryS27/barrys-ui.git"
+    "url": "https://github.com/asong56/acdn.git"
   },
   "devDependencies": {
-    "sass": "^1.97.3"
+    "sass": "^1.97.3",
+    "tsup": "^8.0.0"
   }
 }
