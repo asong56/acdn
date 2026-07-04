@@ -1,5 +1,5 @@
 # asong56 Design Manual
-> v0.2
+> v0.3
 > Philosophy: Innei Yohaku · Apple HIG · Tidal Design Language  
 > Constraints: Vanilla SCSS · Zero JS · Single file · Semantic HTML first
 
@@ -19,7 +19,8 @@
 10. [Responsive Strategy](#10-responsive-strategy)
 11. [Accessibility & Finish Details](#11-accessibility--finish-details)
 12. [SCSS Token Reference](#12-scss-token-reference)
-13. [Appendix: Detail Checklist](#appendix-detail-checklist)
+13. [Cursor, Scrollbar & Text Selection](#13-cursor-scrollbar--text-selection)
+14. [Appendix: Detail Checklist](#appendix-detail-checklist)
 
 ---
 
@@ -390,7 +391,20 @@ a[data-display-href] {
 
 > **On the 48→96 jump.** The doubling is intentional. 96px signals a different scale entirely — it does not need to transition smoothly from 48px. It means: *you are now at the page level.* If a 64px intermediate is ever needed, add it explicitly rather than pulling 96px down.
 
-### 4.2 Content Width
+### 4.2 Usage Rules (Scenario-Locked)
+
+| Value | Usage | Prohibited for |
+|---|---|---|
+| `4px` | Icon-to-text gap, `<dt>` and `<dd>` on same line | Layout spacing |
+| `8px` | List item gap, inline element stacking, `<li>` margin | Large sections |
+| `12px` | Compact container padding (`<code>`, badge) | Paragraph spacing |
+| `16px` | Standard container padding (button, input), `<p>` margin-bottom | — |
+| `24px` | Component group gap, `<section>` internal child spacing | Page level |
+| `32px` | `<h2>` margin-top | — |
+| `48px` | Between `<section>` and `<section>` | Hero area |
+| `96px` | Page hero, above footer — **at most once per page** | Inside any component |
+
+### 4.3 Content Width
 
 ```scss
 $w-text: 68ch;    // Body copy (ch scales with font size)
@@ -400,7 +414,7 @@ $w-full: 1100px;  // Max container
 
 Body copy never stretches to 100% width. The surrounding whitespace is structural.
 
-### 4.3 Vertical Rhythm
+### 4.4 Vertical Rhythm
 
 | Element | `margin-top` | `margin-bottom` |
 |---|---|---|
@@ -413,7 +427,7 @@ Body copy never stretches to 100% width. The surrounding whitespace is structura
 | `pre` | `24px` | `24px` |
 | `figure` | `32px` | `32px` |
 
-### 4.4 Concentricity (HIG)
+### 4.5 Concentricity (HIG)
 
 **Rule: outer radius = inner radius + padding.**
 
@@ -933,7 +947,7 @@ button {
     }
   }
 
-  &:disabled        { opacity: 0.45; pointer-events: none; }
+  &:disabled        { opacity: 0.45; pointer-events: none; cursor: not-allowed; }
   &[aria-busy='true'] { pointer-events: none; opacity: 0.7; }
 }
 
@@ -1097,13 +1111,21 @@ Pure-color icons read heavier than intended on light backgrounds. A near-invisib
 }
 ```
 
-### 9.3 Person Name Cursor
+### 9.3 Colorful Cursor Blink
+
+```scss
+input, textarea, [contenteditable] {
+  caret-color: var(--color-accent);
+}
+```
+
+### 9.4 Person Name Cursor
 
 ```scss
 [data-type='person'] { cursor: context-menu; }
 ```
 
-### 9.4 Filepath Truncation (Preserve Filename)
+### 9.5 Filepath Truncation (Preserve Filename)
 
 ```scss
 .filepath {
@@ -1128,7 +1150,7 @@ Pure-color icons read heavier than intended on light backgrounds. A near-invisib
 }
 ```
 
-### 9.5 Color String Preview
+### 9.6 Color String Preview
 
 ```scss
 // <span class="color-swatch" style="--c: #ff6b6b">#ff6b6b</span>
@@ -1145,7 +1167,7 @@ Pure-color icons read heavier than intended on light backgrounds. A near-invisib
 }
 ```
 
-### 9.6 Footer Nav Active State
+### 9.7 Footer Nav Active State
 
 ```scss
 footer nav a {
@@ -1176,7 +1198,7 @@ footer nav a {
 }
 ```
 
-### 9.7 Overscroll Bouncing
+### 9.8 Overscroll Bouncing
 
 ```scss
 html { overscroll-behavior-y: contain; }
@@ -1188,7 +1210,7 @@ html { overscroll-behavior-y: contain; }
 }
 ```
 
-### 9.8 Icon Picker Animation
+### 9.9 Icon Picker Animation
 
 ```scss
 .swatch {
@@ -1206,7 +1228,7 @@ html { overscroll-behavior-y: contain; }
 }
 ```
 
-### 9.9 Highlight Block Transition
+### 9.10 Highlight Block Transition
 
 ```scss
 :target,
@@ -1217,7 +1239,7 @@ html { overscroll-behavior-y: contain; }
 }
 ```
 
-### 9.10 Contact Links
+### 9.11 Contact Links
 
 ```scss
 a[href^='mailto'],
@@ -1240,7 +1262,7 @@ a[data-contact] {
 }
 ```
 
-### 9.11 Footer Easter Egg
+### 9.12 Footer Easter Egg
 
 ```scss
 footer [data-easter] {
@@ -1621,6 +1643,257 @@ $w-full: 1100px;
 
 ---
 
+## 13. Cursor, Scrollbar & Text Selection
+
+### 13.1 Custom Cursor
+
+#### Design Principles
+
+The cursor is the last thing noticed, the first thing that shapes feel. Goals:
+
+- **Lighter than the system cursor:** 1px thinner stroke, ~15% smaller overall — more precise on high-DPI screens
+- **Dark fill + white stroke:** visible on any background without relying on color to convey information
+- **No animation:** pure CSS cursors are static SVGs — forcing animation requires JS and adds latency
+- **Change shape only when semantically justified:** no decorative swaps; every cursor shape has a defined meaning
+
+#### Cursor State Map
+
+| State | `cursor` | Context | Notes |
+|---|---|---|---|
+| Default | Custom SVG arrow | Page background, non-interactive elements | See SVG spec below |
+| Clickable | `pointer` (system) | `<a>`, `<button>` | System hand — cognitive consistency |
+| Text entry | `text` (system) | `<input>`, `<textarea>`, `[contenteditable]` | Use `caret-color` for color |
+| Person name | `context-menu` (system) | `[data-type='person']` | System question-mark icon |
+| Draggable | `grab` (system) | Draggable containers | |
+| Dragging | `grabbing` (system) | Active drag state | |
+| Disabled | `not-allowed` (system) | `[disabled]`, `[aria-disabled]` | |
+| Precision | Custom SVG crosshair | Data charts, canvas elements | See SVG spec below |
+| Text + link mixed zone | `pointer` (system) | Fully-clickable cards | |
+
+#### SVG Cursor Specs
+
+**Default cursor (refined arrow):**
+
+```
+Size:    20 × 20px (system ~24px, ~15% smaller)
+Hotspot: 0, 0 (tip)
+Style:   fill #0a0a0a, stroke white 1.5px
+Shape:   standard arrow angle, right edge slightly inset, tail shorter
+```
+
+```scss
+$cursor-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M2 2l5.5 14 2.5-4.5 4.5 2.5-2.5-11z' fill='%230a0a0a' stroke='white' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 0 0, default;
+
+// Precision crosshair (data zones, charts)
+$cursor-precise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='1.5' fill='%230a0a0a'/%3E%3Cline x1='10' y1='2' x2='10' y2='8' stroke='%230a0a0a' stroke-width='1.5'/%3E%3Cline x1='10' y1='12' x2='10' y2='18' stroke='%230a0a0a' stroke-width='1.5'/%3E%3Cline x1='2' y1='10' x2='8' y2='10' stroke='%230a0a0a' stroke-width='1.5'/%3E%3Cline x1='12' y1='10' x2='18' y2='10' stroke='%230a0a0a' stroke-width='1.5'/%3E%3C/svg%3E") 10 10, crosshair;
+```
+
+#### Global Application
+
+```scss
+// Replace system default with refined arrow
+html {
+  cursor: $cursor-default;
+}
+
+// Text zones: keep system I-beam (already optimal — don't override)
+p, article, blockquote, li, h1, h2, h3,
+[contenteditable], input, textarea {
+  cursor: text;
+}
+
+// Clickable: keep system pointer (cognitive consistency)
+a, button, label, [role='button'],
+summary, [tabindex]:not([tabindex='-1']) {
+  cursor: pointer;
+}
+
+// Person name: context-menu = "click for info"
+[data-type='person'] {
+  cursor: context-menu;
+}
+
+// Precision zones (charts, data visualizations)
+[data-cursor='precise'],
+canvas,
+.chart {
+  cursor: $cursor-precise;
+}
+
+// Draggable
+[draggable='true'] {
+  cursor: grab;
+  &:active { cursor: grabbing; }
+}
+
+// Disabled
+[disabled],
+[aria-disabled='true'] {
+  cursor: not-allowed;
+}
+
+// Zoomable images
+figure img[data-zoomable] {
+  cursor: zoom-in;
+}
+```
+
+> **Dark mode:** The system cursor auto-adapts. Custom SVGs with `stroke: white` are legible on any background — including images, video, gradients — without a dark-mode variant.
+
+> **Why no dot-follower?** A following dot requires `mousemove` → `transform` every frame. Even with `will-change: transform`, there is ~1 frame lag on slow scrolls that breaks the "precision" feel. This system invests in cursor shape quality, not cursor decoration.
+
+---
+
+### 13.2 Scrollbar
+
+#### Design Principles
+
+- **Thin:** 6px (vertical), 4px (horizontal)
+- **Transparent track:** nearly invisible at rest, does not compete visually
+- **Context color:** follows `--color-border`, blends naturally into the interface
+- **Hover darkens:** deepens on mouseover, provides action feedback
+- **Rounded:** `border-radius: 3px` (fully rounded)
+
+#### Implementation
+
+```scss
+// ── Modern standard (Firefox + Chrome 121+) ──────────────
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+// ── WebKit fine control (Safari + older Chrome) ──────────
+::-webkit-scrollbar {
+  width: 6px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+  transition: background 120ms ease;  // some browsers ignore this transition
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+// ── Specific containers: thinner scrollbar ───────────────
+// Modal, dropdown, code blocks — thinner to reduce visual noise
+dialog,
+[role='dialog'],
+.dropdown,
+pre {
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    width: 3px;
+  }
+}
+
+// ── Overlay scrollbar (float above content, no width cost) ──
+.scroll-area {
+  overflow: auto;
+  overflow: overlay;  // Chrome; Firefox falls back to auto (minor width diff acceptable)
+}
+```
+
+#### Scene Reference
+
+| Context | Width | Color | Notes |
+|---|---|---|---|
+| Page main scrollbar | 6px | `--color-border` | — |
+| Modal / Drawer interior | 3px | `--color-border` | Thinner; doesn't compete with content |
+| `<pre>` code block | 3px | `--color-border` | Horizontal too |
+| Data table | 4px | `--color-border` | Primarily horizontal |
+
+> **macOS overlay scrollbar:** macOS already uses overlay-mode scrollbars (semi-transparent, no layout impact, only visible during scroll) — the ideal state. The customization above targets primarily Windows (default: always-visible, 15–17px wide).
+
+---
+
+### 13.3 Text Selection
+
+#### Technical Constraints
+
+`::selection` supports only:
+- `background-color`
+- `color`
+- `text-shadow` (partial browser support)
+
+No `border`, `border-radius`, `outline`, or `box-shadow` — rounded selection highlights are not achievable.
+
+#### Design Decisions
+
+Within these constraints, quality comes from two things:
+1. **Selection color matches accent:** avoid the browser's default blue; use `--color-accent-dim`
+2. **Differentiate body vs. code:** code selection is slightly deeper, reinforcing the feel of selecting a syntax unit
+
+```scss
+// ── Global selection ──────────────────────────────────────
+::selection {
+  background-color: var(--color-accent-dim);
+  color: var(--color-text);
+}
+
+// ── Code blocks: slightly deeper — "I selected code" feel ─
+pre ::selection,
+code ::selection {
+  background-color: oklch(52% 0.18 220 / 0.25);  // accent at 25% opacity
+  color: inherit;
+}
+
+// ── Serif blockquote: sync accent color ───────────────────
+blockquote ::selection {
+  background-color: var(--color-accent-dim);
+  color: var(--color-text);
+}
+```
+
+#### Dark Mode
+
+```scss
+@media (prefers-color-scheme: dark) {
+  ::selection {
+    background-color: var(--color-accent-dim);  // already adapted in §2.4
+    color: var(--color-text);
+  }
+
+  pre ::selection,
+  code ::selection {
+    background-color: oklch(60% 0.16 220 / 0.30);  // dark accent at 30% opacity
+  }
+}
+```
+
+> Elements with `user-select: none` (see §11.4) — `nav`, `button`, `.badge`, `time`, `label` — are unaffected. Selection styles only apply where selection is permitted.
+
+---
+
+### 13.4 Coordination: All Three Together
+
+Cursor + scrollbar + selection color should all draw from the same system:
+
+| Detail | Color source | Value |
+|---|---|---|
+| Cursor fill | Fixed dark (any theme) | `#0a0a0a` + `white` stroke |
+| Scrollbar thumb | `--color-border` (theme-aware) | n-2 step |
+| Scrollbar hover | `--color-text-muted` (theme-aware) | n-3 step |
+| Selection background | `--color-accent-dim` (sole color accent) | accent, low saturation |
+| Code selection | `accent / 0.25` (slightly deeper) | — |
+
+> The cursor uses fixed dark rather than a theme color because it must remain legible on any background — including images, video, and gradients. Selection uses accent because it is the only hue in the interface: the moment text is highlighted, the user sees the system's color, not the browser's blue.
+
+---
+
 ## Appendix: Detail Checklist
 
 | Detail | Section | Status |
@@ -1633,10 +1906,10 @@ $w-full: 1100px;
 | Blurred image appearing | §6.4 | ✅ |
 | Progressive blur edge | §7.5 | ✅ mask-image |
 | Animated signature | §6.4 | ✅ stroke-dashoffset |
-| Special text selection | §11.5 | ✅ per-zone |
+| Special text selection | §11.5, §13.3 | ✅ per-zone |
 | Media response to theme mode | §2.4 | ✅ |
 | Prevent continuous click | §8.4 | ✅ aria-busy |
-| Footer easter egg | §9.11 | ✅ |
+| Footer easter egg | §9.12 | ✅ |
 | Mailto link | §10.3 | ✅ |
 | Inset ring | §7.3 | ✅ |
 | Prevent layout shift (font weight) | §3.4 | ✅ ::after pre-occupy |
@@ -1646,34 +1919,36 @@ $w-full: 1100px;
 | Drop www prefix | §3.7 | ✅ CSS interface |
 | Blur trick for optical fit | §9.1 | ✅ |
 | Modal close respects physics | §6.4 | ✅ asymmetric easing |
-| Outer / inner border radius | §4.4, §5 | ✅ |
-| Animated icon picker | §9.8 | ✅ |
+| Outer / inner border radius | §4.5, §5 | ✅ |
+| Animated icon picker | §9.9 | ✅ |
 | Morphing button → input | §8.4 | ✅ |
-| Overscroll bouncing | §9.7 | ✅ |
-| Smooth highlight transition | §9.9 | ✅ |
-| Special cursor for person name | §9.3 | ✅ |
+| Overscroll bouncing | §9.8 | ✅ |
+| Smooth highlight transition | §9.10 | ✅ |
+| Special cursor for person name | §9.4 | ✅ |
 | Transition between two tooltips | §6.4 | ✅ |
 | Interruptible animation | §6.1 | ✅ |
 | Animated action button | §8.4 | ✅ |
-| Self-explanatory load bar | §6.4 | ✅ native `<progress>` |
+| Self-explanatory load bar | §8.4 (progress) | ✅ native `<progress>` |
 | Staggered animation | §6.4 | ✅ |
 | Animated state-based icons | §6.4 | ✅ |
 | Form respects keyboard | §8.5 | ✅ env() |
-| Colorful cursor / caret | §11.6 | ✅ caret-color |
-| Color string preview | §9.5 | ✅ |
-| Contact not follow | §9.10 | ✅ |
-| Filepath truncation | §9.4 | ✅ direction: rtl |
+| Colorful cursor / caret | §9.3 | ✅ caret-color |
+| Color string preview | §9.6 | ✅ |
+| Contact not follow | §9.11 | ✅ |
+| Filepath truncation | §9.5 | ✅ direction: rtl |
 | Liquid glass switcher | §9.2 | ✅ |
-| Active state footer nav | §9.6 | ✅ |
+| Active state footer nav | §9.7 | ✅ |
 | Dynamic theme color | §2.6 | ✅ |
 | Reduced animation (frequent) | §6.1, §6.3 | ✅ |
 | format-detection meta | §10.3 | ✅ |
-| user-select permission map | §11.4 | ✅ |
-| Card usage policy | §8.1 | ✅ |
-| Semantic HTML first | §1.4 | ✅ |
-| Custom pointer cursor | §11.6 | ✅ SVG data URI |
+| user-select permission map | §11.4 | ✅ **new** |
+| Card usage policy | §8.1 | ✅ **new** |
+| Semantic HTML first | §1.4 | ✅ **new** |
+| Custom cursor system | §13.1 | ✅ SVG data URI |
 | Cursor follower | §11.6 | ⚠️ CSS defined, minimal JS needed |
-| Scrollbar design | §11.7 | ✅ |
+| Scrollbar design | §13.2 | ✅ |
+| Text selection colors | §13.3 | ✅ per-zone |
+| Caret-color accent | §9.3 | ✅ |
 | z-index 0–5 | §7.1 | ✅ |
 | Chat minimap | — | ⚠️ Requires JS |
 | ToC active items by visibility | — | ⚠️ Requires IntersectionObserver |
@@ -1687,4 +1962,4 @@ $w-full: 1100px;
 
 ---
 
-*asong56 Design Manual · v0.2*
+*asong56 Design Manual · v0.3*
