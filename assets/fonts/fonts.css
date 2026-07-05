@@ -8,8 +8,9 @@
 }
 
 /* --- Monaspace Neon (Variable) --- */
+/* font-family must match $font-mono token: 'Monaspace Neon' */
 @font-face {
-    font-family: 'Monaspace';
+    font-family: 'Monaspace Neon';
     src: url('https://cdn.jsdelivr.net/gh/asong56/acdn@release/assets/fonts/Mona-Neon-Var.woff2') format('woff2-variations');
     font-weight: 400;
     font-style: normal;
@@ -17,6 +18,10 @@
 }
 
 /* --- Lora (Variable) --- */
+/* Design spec calls for 'Gilda Display' ($font-serif), but Gilda Display is
+   not self-hosted. Lora is the hosted substitute: both are elegant display serifs
+   with high stroke contrast. Update the CDN path when Gilda Display is available.
+   The $font-serif token already lists 'Gilda Display' first, then 'Lora'. */
 @font-face {
     font-family: 'Lora';
     src: url('https://cdn.jsdelivr.net/gh/asong56/acdn@release/assets/fonts/Lora-Variable.woff2') format('woff2-variations');
