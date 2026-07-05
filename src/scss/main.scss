@@ -1,4 +1,7 @@
+// asong56 Design Manual v0.3
+// Compile order matters: tokens → mixins → base → components → interactions
 @use 'variables';
 @use 'mixins';
 @use 'base';
 @use 'components';
+@use 'interactions';
