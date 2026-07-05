@@ -17,7 +17,8 @@ $font-sans:
   sans-serif;
 
 $font-serif:
-  'Gilda Display',
+  'Gilda Display',  // design spec — not yet hosted, falls through to Lora
+  'Lora',           // hosted substitute (see fonts.css)
   Georgia,
   serif;
 
@@ -112,6 +113,10 @@ $cursor-dark:  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'
 
   // Layout gap
   --gap: clamp(16px, 2vw + 8px, 24px);
+
+  // §7.4 Liquid glass tokens (original values preserved)
+  --glass-bg:     rgba(255, 255, 255, 0.70);
+  --glass-border: rgba(255, 255, 255, 0.50);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -126,6 +131,10 @@ $cursor-dark:  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'
     --color-text:       oklch(88%  0.008 260);
     --color-accent:     oklch(60%  0.16  220);
     --color-accent-dim: oklch(18%  0.06  220);
+
+    // §7.4 Liquid glass tokens — dark mode
+    --glass-bg:     rgba(28, 28, 30, 0.70);
+    --glass-border: rgba(255, 255, 255, 0.10);
 
     // §7.2 Shadows — halved opacity in dark mode
     --shadow-sm: 0 1px 3px  oklch(0% 0 0 / 0.025);
