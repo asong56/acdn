@@ -13,7 +13,9 @@
         <ul>
             {% for item in menu %}
                 <li>
-                    <a href="{{ item.url }}" {% if item.active %}aria-current="page"{% endif %}>
+                    <a href="{{ item.url }}"
+                       data-text="{{ item.text }}"
+                       {% if item.active %}aria-current="page"{% endif %}>
                         {{ item.text }}
                     </a>
                 </li>
@@ -283,33 +285,38 @@
     </fieldset>
 {%- endmacro %}
 
-{% macro progress(v, type='line', color='#3b82f6', s=10) %}
+{% macro progress(v, type='line', s=10) %}
+    {# Colors use CSS variables — override via style attribute if needed:
+       style="--progress-track: ...; --progress-fill: ..." #}
     {% if type == 'line' %}
-        <svg width="100%" height="{{ s }}" viewBox="0 0 100 {{ s }}" xmlns="http://www.w3.org/2000/svg">
-            <rect width="100" height="{{ s }}" fill="#eee" rx="{{ s/2 }}" />
-            <rect width="{{ v }}" height="{{ s }}" fill="{{ color }}" rx="{{ s/2 }}" style="transition:0.4s" />
+        <svg width="100%" height="{{ s }}" viewBox="0 0 100 {{ s }}" xmlns="http://www.w3.org/2000/svg"
+             style="--progress-track: var(--color-border, #e5e5ea); --progress-fill: var(--color-accent, #007AFF)">
+            <rect width="100" height="{{ s }}" fill="var(--progress-track)" rx="{{ s/2 }}" />
+            <rect width="{{ v }}" height="{{ s }}" fill="var(--progress-fill)" rx="{{ s/2 }}" style="transition: width 0.4s" />
         </svg>
 
     {% elif type == 'circle' %}
-        <svg width="{{ s }}" height="{{ s }}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="45" fill="none" stroke="#eee" stroke-width="10" />
-            <circle cx="50" cy="50" r="45" fill="none" stroke="{{ color }}" stroke-width="10"
+        <svg width="{{ s }}" height="{{ s }}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"
+             style="--progress-track: var(--color-border, #e5e5ea); --progress-fill: var(--color-accent, #007AFF)">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="var(--progress-track)" stroke-width="10" />
+            <circle cx="50" cy="50" r="45" fill="none" stroke="var(--progress-fill)" stroke-width="10"
                 stroke-dasharray="283" stroke-dashoffset="{{ 283 - (v/100) * 283 }}"
-                stroke-linecap="round" transform="rotate(-90 50 50)" style="transition:0.4s" />
+                stroke-linecap="round" transform="rotate(-90 50 50)" style="transition: stroke-dashoffset 0.4s" />
         </svg>
 
     {% elif type == 'dashboard' %}
-        <svg width="{{ s }}" height="{{ s/2 }}" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
-            <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#eee" stroke-width="10" stroke-linecap="round" />
-            <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="{{ color }}" stroke-width="10" 
+        <svg width="{{ s }}" height="{{ s/2 }}" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg"
+             style="--progress-track: var(--color-border, #e5e5ea); --progress-fill: var(--color-accent, #007AFF)">
+            <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="var(--progress-track)" stroke-width="10" stroke-linecap="round" />
+            <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="var(--progress-fill)" stroke-width="10"
                 stroke-dasharray="126" stroke-dashoffset="{{ 126 - (v/100) * 126 }}"
-                stroke-linecap="round" style="transition:0.4s" />
+                stroke-linecap="round" style="transition: stroke-dashoffset 0.4s" />
         </svg>
     {% endif %}
 {% endmacro %}
 
-{% macro badge(text, icon=none) %}
-    <span>
+{% macro badge(text, icon=none, variant=none) %}
+    <span class="badge"{% if variant %} data-variant="{{ variant }}"{% endif %}>
         {% if icon %}
             <span class="iconify" data-icon="{{ icon }}" aria-hidden="true"></span>
         {% endif %}
