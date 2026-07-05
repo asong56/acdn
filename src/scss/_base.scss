@@ -1,20 +1,339 @@
+// ════════════════════════════════════════════════════════════════════════════
+// asong56 Design Manual v0.3 — Base
+// ════════════════════════════════════════════════════════════════════════════
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// ── RESET ────────────────────────────────────────────────────────────────────
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+// ── §3 BODY ──────────────────────────────────────────────────────────────────
 body {
-    margin: 0;
-    background-color: var(--bg);
-    color: var(--text-primary);
-    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
-    -webkit-font-smoothing: antialiased;
+  margin: 0;
+  font-family: $font-sans;
+  font-size: var(--text-base);
+  font-weight: 400;
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-a { text-decoration: none; color: inherit; }
-img { display: block; max-width: 100%; }
+// §11.7 prevent scrollbar layout shift
+html {
+  scrollbar-gutter: stable;
+  overscroll-behavior-y: contain; // §9.8
+}
 
+// ── §3.3 TYPE SCALE ──────────────────────────────────────────────────────────
+h1, h2, h3 { font-family: $font-sans; font-weight: 600; }
+h1 { font-size: var(--text-2xl); line-height: 1.1; letter-spacing: -0.03em; }
+h2 { font-size: var(--text-xl);  line-height: 1.2; letter-spacing: -0.02em; }
+h3 { font-size: var(--text-lg);  line-height: 1.3; letter-spacing: -0.01em; }
+h4, h5, h6 { font-size: var(--text-base); font-weight: 600; line-height: 1.5; }
+
+p  { font-size: var(--text-base); line-height: 1.7; }
+
+small { font-size: var(--text-xs); }
+
+// §3.2 Serif — blockquote only
+blockquote {
+  font-family: $font-serif;
+  font-style: italic;
+  line-height: 1.8;
+  letter-spacing: 0.015em;
+}
+
+// §3 Mono
+code, pre, kbd, samp {
+  font-family: $font-mono;
+  letter-spacing: 0;
+}
+
+pre { line-height: 1.6; }
+
+// ── §4.4 VERTICAL RHYTHM ─────────────────────────────────────────────────────
+h1 { margin-top: 0;    margin-bottom: 24px; }
+h2 { margin-top: 48px; margin-bottom: 16px; }
+h3 { margin-top: 32px; margin-bottom: 8px; }
+p  { margin-top: 0;    margin-bottom: 16px; }
+
+li { margin-bottom: 8px; }
+
+blockquote { margin: 32px 0; }
+pre        { margin: 24px 0; }
+figure     { margin: 32px 0; }
+
+// ── §4.3 CONTENT WIDTH ───────────────────────────────────────────────────────
+main {
+  max-width: $w-full;
+  margin-inline: auto;
+  padding-inline: 24px;
+}
+
+article,
+.text-block {
+  max-width: $w-text;
+}
+
+// ── §3.7 LINKS ───────────────────────────────────────────────────────────────
+a {
+  color: inherit;
+  text-decoration-color: var(--color-border);
+  text-underline-offset: 3px;
+  @include motion {
+    transition:
+      color $dur-fast $ease-out,
+      text-decoration-color $dur-fast $ease-out;
+  }
+
+  &:hover {
+    color: var(--color-accent);
+    text-decoration-color: var(--color-accent);
+  }
+
+  &:visited { color: var(--color-text-muted); }
+}
+
+// External link indicator
+a[href^='http']::after,
+a[href^='https']::after {
+  content: '↗';
+  font-size: 0.7em;
+  vertical-align: super;
+  margin-left: 0.1em;
+  display: inline-block;
+  @include motion {
+    transition: transform $dur-fast cubic-bezier(0.34, 1.56, 0.64, 1.0);
+  }
+}
+
+a[href^='http']:hover::after,
+a[href^='https']:hover::after {
+  transform: translate(2px, -2px);
+}
+
+// §10.3 Tel / mailto — prevent iOS color injection
+a[href^='tel'],
+a[href^='mailto'] {
+  color: inherit;
+  text-decoration: none;
+  &:hover { text-decoration: underline; }
+}
+
+// Drop www prefix via data attribute
+a[data-display-href] {
+  font-size: 0;
+  &::before {
+    content: attr(data-display-href);
+    font-size: var(--text-sm);
+  }
+}
+
+// ── §3 INLINE CODE ───────────────────────────────────────────────────────────
+code:not(pre code) {
+  font-size: 0.875em;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-sm;
+  padding: 1px 5px;
+}
+
+// ── IMAGES ───────────────────────────────────────────────────────────────────
+img {
+  display: block;
+  max-width: 100%;
+  // §7.3 inset ring
+  box-shadow: inset 0 0 0 1px oklch(0% 0 0 / 0.08);
+
+  @media (prefers-color-scheme: dark) {
+    box-shadow: inset 0 0 0 1px oklch(100% 0 0 / 0.10);
+  }
+}
+
+// §6.4 Progressive blur reveal
+img.loading {
+  filter: blur(12px);
+  transform: scale(1.02);
+  @include motion {
+    transition:
+      filter    $dur-page $ease-out,
+      transform $dur-page $ease-out;
+  }
+}
+
+img.loaded {
+  filter: blur(0);
+  transform: scale(1);
+}
+
+// ── §11.1 FOCUS ──────────────────────────────────────────────────────────────
+:focus         { outline: none; }
 :focus-visible {
-    outline: 2px solid var(--blue);
-    outline-offset: 2px;
-    border-radius: 4px;
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: inherit;
 }
 
-a:focus-visible, button:focus-visible { 
-    border-radius: 8px; 
+// ── §11.3 ARIA-DRIVEN STATES ─────────────────────────────────────────────────
+[aria-disabled='true'] { opacity: 0.45; pointer-events: none; }
+
+[aria-expanded='false'] + * { display: none; }
+[aria-expanded='true']  + * { display: block; }
+
+[aria-current='page'] { color: var(--color-accent); font-weight: 600; }
+
+[aria-busy='true'] { pointer-events: none; }
+
+// ── §11.4 USER-SELECT PERMISSION MAP ─────────────────────────────────────────
+nav, button, label, th,
+.badge, time, [role='img'] {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+p, article, code, pre, h1, h2, h3,
+blockquote, figcaption, dd {
+  user-select: text;
+}
+
+// ── §11.5 TEXT SELECTION ─────────────────────────────────────────────────────
+// Default: accent at 15% — visible but not harsh
+::selection {
+  background: oklch(52% 0.18 220 / 0.15);
+  color: inherit;
+}
+
+// Code blocks: stronger (darker background)
+pre::selection, pre *::selection,
+code::selection {
+  background: oklch(52% 0.18 220 / 0.28);
+  color: inherit;
+}
+
+// Blockquote: warm amber (matches Gilda Display's warmth)
+blockquote::selection, blockquote *::selection {
+  background: oklch(72% 0.12 55 / 0.20);
+  color: inherit;
+}
+
+// ── §11.6 CURSOR SYSTEM ──────────────────────────────────────────────────────
+// System default arrow — do not replace (compositor renders it sub-ms)
+
+// Clickable: custom SVG circle (only override for pointer state)
+a, button, [role='button'], label, .badge, summary {
+  cursor: $cursor-light;
+
+  @media (prefers-color-scheme: dark) { cursor: $cursor-dark; }
+}
+
+// §9.4 Person name
+[data-type='person'] { cursor: context-menu; }
+
+// Precision zones
+[data-cursor='precise'], canvas, .chart { cursor: crosshair; }
+
+// Draggable
+[draggable='true'] {
+  cursor: grab;
+  &:active { cursor: grabbing; }
+}
+
+// Disabled
+[disabled], [aria-disabled='true'] { cursor: not-allowed; }
+
+// Zoomable
+figure img[data-zoomable] { cursor: zoom-in; }
+
+// §9.3 Colorful caret
+input, textarea, [contenteditable] {
+  caret-color: var(--color-accent);
+}
+
+// ── §3.4 NAV WEIGHT SHIFT — prevent layout shift ─────────────────────────────
+nav a {
+  font-weight: 400;
+
+  &::after {
+    content: attr(data-text);
+    font-weight: 600;
+    visibility: hidden;
+    height: 0;
+    overflow: hidden;
+    display: block;
+    pointer-events: none;
+  }
+
+  &[aria-current='page'] { font-weight: 600; }
+}
+
+// ── §11.7 SCROLLBAR ──────────────────────────────────────────────────────────
+// Firefox
+* {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+// WebKit — invisible at rest, emerges on hover
+::-webkit-scrollbar         { width: 5px; height: 5px; }
+::-webkit-scrollbar-track   { background: transparent; }
+::-webkit-scrollbar-corner  { background: transparent; }
+
+::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 50px;
+  @include motion { transition: background $dur-fast $ease-out; }
+}
+
+*:hover::-webkit-scrollbar-thumb    { background: var(--color-border); }
+::-webkit-scrollbar-thumb:hover     { background: var(--color-text-muted); }
+::-webkit-scrollbar-thumb:active    { background: var(--color-text-muted); }
+
+// Code block — always visible (signal horizontal scroll available)
+pre::-webkit-scrollbar       { height: 4px; }
+pre::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 50px; }
+pre::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+
+// Overlay scrollbar
+@supports (overflow: overlay) {
+  .scroll-area { overflow: overlay; }
+}
+.scroll-area {
+  scrollbar-gutter: stable both-edges;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+// ── §2.5 TINTED BACKGROUND ───────────────────────────────────────────────────
+.bg-tinted {
+  background-color: oklch(
+    var(--bg-l, 98.5%)
+    var(--media-chroma)
+    var(--media-hue)
+  );
+  @include motion { transition: background-color $dur-tint $ease-out; }
+
+  @media (prefers-color-scheme: dark) { --bg-l: 11%; }
+}
+
+// ── §6.5 REDUCED MOTION ──────────────────────────────────────────────────────
+// Must appear last — overrides everything above
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration:        0.01ms !important;
+    animation-iteration-count: 1      !important;
+    transition-duration:       0.01ms !important;
+    scroll-behavior:           auto   !important;
+  }
+}
+
+// ── §10.2 DESKTOP-ONLY ───────────────────────────────────────────────────────
+[data-desktop-only] {
+  @media (max-width: #{$bp-md - 1px}) { display: none; }
 }
