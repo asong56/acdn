@@ -1,7 +1,7 @@
 {
-  "name": "@barrys27/ui",
-  "version": "1.3.3",
-  "description": "A minimalist, 8-point grid UI architecture inspired by iOS HIG.",
+  "name": "@asong56/nepenthe",
+  "version": "1.4.0",
+  "description": "A minimalist, 8-point grid UI architecture inspired by iOS HIG. v0.3: full token rewrite (oklch), interactions, cursor/scrollbar/selection system.",
   "main": "static/css/main.css",
   "style": "static/css/main.css",
   "sass": "src/scss/main.scss",
@@ -13,7 +13,8 @@
       "default": "./static/css/main.css"
     },
     "./css": "./static/css/main.css",
-    "./scss/*": "./src/scss/*.scss"
+    "./scss/*": "./src/scss/*.scss",
+    "./scss/interactions": "./src/scss/_interactions.scss"
   },
   "files": [
     "src/scss",
