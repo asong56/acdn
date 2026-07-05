@@ -1,69 +1,344 @@
-@use 'mixins' as *;
+// ════════════════════════════════════════════════════════════════════════════
+// asong56 Design Manual v0.3 — Components
+// ════════════════════════════════════════════════════════════════════════════
 @use 'variables' as *;
+@use 'mixins' as *;
 
+// ── §8.2 ARTICLE LIST ────────────────────────────────────────────────────────
+article + article {
+  border-top: 1px solid var(--color-border);
+  padding-top: 24px;
+  margin-top: 24px;
+}
+
+article {
+  @include motion {
+    transition:
+      background-color $dur-fast $ease-out,
+      padding          $dur-fast $ease-out;
+  }
+
+  &:hover {
+    background-color: var(--color-surface);
+    padding-inline: 12px;
+    margin-inline: -12px;
+    border-radius: $radius-base;
+  }
+}
+
+// ── GRID ─────────────────────────────────────────────────────────────────────
 .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-    gap: var(--gap);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: var(--gap);
 }
 
+// ── §8.1 CARD ────────────────────────────────────────────────────────────────
 .card {
-    display: block; 
-    @include std-thin;
-    border-radius: 24px;
-    overflow: hidden;
-    position: relative;
-    
-    &.is-interactive {
-        @include tap-effect;
-        &:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1);
-        }
+  display: block;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  @include concentric($radius-lg, 16px); // §4.5 concentricity
+  overflow: hidden;
+  position: relative;
+
+  &.is-interactive {
+    @include tap-effect;
+    @include motion {
+      transition:
+        transform    $dur-fast  $ease-snap,
+        box-shadow   $dur-slow  $ease-out,
+        background   $dur-fast  $ease-out;
     }
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+  }
 }
 
+// ── §8.3 BADGE ───────────────────────────────────────────────────────────────
 .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 8px;
-    border-radius: 2em;
-    font-size: 13px;
-    font-weight: 600;
-    user-select: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: $radius-sm;
+  padding: 2px 6px;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  background: transparent;
+  user-select: none;
+  line-height: 1.2;
 
-    @each $name, $hex in $light-palette {
-        &.is-#{$name} {
-            background-color: color-mix(in srgb, var(--#{$name}), transparent 92%); 
-            color: var(--#{$name});
-            border: 1px solid color-mix(in srgb, var(--#{$name}), transparent 85%);
-        }
+  &[data-variant='accent'] {
+    color: var(--color-accent);
+    border-color: currentColor;
+    background: var(--color-accent-dim);
+  }
+
+  &[data-variant='warning'] {
+    color: oklch(52% 0.18 55);
+    border-color: currentColor;
+    background: oklch(97% 0.04 55);
+    @media (prefers-color-scheme: dark) {
+      background: oklch(22% 0.06 55);
     }
-    i { width: 14px; height: 14px; }
+  }
 }
 
-.row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+// ── §8.4 BUTTON ──────────────────────────────────────────────────────────────
+button {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border-radius: $radius-base;
+  padding: 8px 16px;
+  line-height: 1.2;
+  @include motion {
+    transition:
+      background-color $dur-fast $ease-out,
+      color            $dur-fast $ease-out,
+      transform        $dur-instant $ease-snap;
+  }
 
-    padding: 16px; 
-    margin: 0;
+  &:active { transform: scale(0.97); }
 
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05); 
+  // Variants
+  &[data-variant='primary'] {
+    background: var(--color-accent);
+    color: oklch(99% 0 0);
+    border-radius: $radius-pill;
 
-    font-size: 17px; 
+    @include motion {
+      &:hover { background: oklch(47% 0.18 220); }
+    }
+  }
 
-    &:last-child { border-bottom: none; }
+  &[data-variant='ghost'] {
+    background: transparent;
+    color: var(--color-text-muted);
+
+    @include motion {
+      &:hover {
+        background: var(--color-surface);
+        color: var(--color-text);
+      }
+    }
+  }
+
+  // §8.4 Disabled
+  &:disabled,
+  &[aria-disabled='true'] {
+    opacity: 0.45;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  &[aria-busy='true'] { pointer-events: none; opacity: 0.7; }
+
+  // Expanded hit area for icon-only buttons (§8.4)
+  &.icon-only {
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: -8px;
+    }
+  }
+
+  // §8.4 Shake on disabled click
+  &:disabled:active {
+    pointer-events: auto;
+    @include motion { animation: shake $dur-slow $ease-out; }
+  }
+
+  // §8.4 Icon action feedback
+  .icon {
+    @include motion { transition: transform $dur-normal $ease-spring; }
+  }
+
+  &:active .icon { transform: translateX(4px) scale(0.9); }
+
+  &[data-success] .icon {
+    @include motion { animation: success-pop $dur-slow $ease-spring forwards; }
+  }
 }
 
+// §8.4 Morphing button → input
+.search-btn {
+  width: 36px;
+  overflow: hidden;
+  border-radius: $radius-pill;
+  @include motion {
+    transition:
+      width         $dur-slow $ease-in-out,
+      border-radius $dur-slow $ease-in-out;
+  }
+
+  &[aria-expanded='true'] {
+    width: 220px;
+    border-radius: $radius-base;
+  }
+}
+
+// ── §8.5 INPUT / TEXTAREA / SELECT ───────────────────────────────────────────
+input, textarea, select {
+  font-family: inherit;
+  font-size: var(--text-base);
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-base;
+  padding: 8px 12px;
+  outline: none;
+  @include motion {
+    transition:
+      border-color $dur-fast $ease-out,
+      box-shadow   $dur-fast $ease-out;
+  }
+
+  &:focus-visible {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-accent-dim);
+  }
+
+  &::placeholder {
+    color: var(--color-text-muted);
+    opacity: 0.6;
+  }
+}
+
+// Keep form actions above soft keyboard (§8.5)
+form footer,
+.form-actions {
+  padding-bottom: max(16px, env(keyboard-inset-height, 0px));
+  @include motion { transition: padding-bottom $dur-slow $ease-out; }
+}
+
+// ── §6.4 PROGRESS ────────────────────────────────────────────────────────────
+progress {
+  appearance: none;
+  height: 2px;
+  background: var(--color-surface);
+  border-radius: 1px;
+  overflow: hidden;
+  border: none;
+
+  &::-webkit-progress-bar   { background: var(--color-surface); }
+  &::-webkit-progress-value {
+    background: var(--color-accent);
+    @include motion { transition: width $dur-normal $ease-in-out; }
+  }
+  &::-moz-progress-bar {
+    background: var(--color-accent);
+    @include motion { transition: width $dur-normal $ease-in-out; }
+  }
+}
+
+// Indeterminate
+progress:not([value])::after {
+  content: '';
+  display: block;
+  height: 100%;
+  background: var(--color-accent);
+  @include motion { animation: progress-slide 1.5s $ease-out infinite; }
+}
+
+// ── §8.6 DL KEY-VALUE DATA ───────────────────────────────────────────────────
+dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 0;
+}
+
+dt {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  letter-spacing: 0.01em;
+  line-height: 1.5;
+}
+
+dd {
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--color-text);
+  text-align: right;
+  line-height: 1.5;
+  margin: 0;
+}
+
+dl > dt:not(:first-child),
+dl > dd:not(:nth-child(2)) {
+  border-top: 1px solid var(--color-border);
+  padding-top: 8px;
+  margin-top: 8px;
+}
+
+// ── §7.4 GLASS ───────────────────────────────────────────────────────────────
+.glass { @include glass; }
+
+// ── MODAL ────────────────────────────────────────────────────────────────────
+dialog[open] {
+  border-radius: $radius-lg;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  box-shadow: var(--shadow-lg);
+  @include motion { animation: modal-in $dur-slow $ease-in-out forwards; }
+}
+
+dialog:not([open]) {
+  @include motion { animation: modal-out $dur-normal $ease-drop forwards; }
+}
+
+// ── §3.4 ICON TOGGLE ─────────────────────────────────────────────────────────
+.icon-toggle {
+  position: relative;
+  width: 24px;
+  height: 24px;
+
+  > * {
+    position: absolute;
+    inset: 0;
+    @include motion { transition: opacity $dur-fast $ease-out, transform $dur-fast $ease-out; }
+  }
+
+  &[data-state='a'] > :first-child { opacity: 1; transform: scale(1); }
+  &[data-state='a'] > :last-child  { opacity: 0; transform: scale(0.8); }
+  &[data-state='b'] > :first-child { opacity: 0; transform: scale(0.8); }
+  &[data-state='b'] > :last-child  { opacity: 1; transform: scale(1); }
+}
+
+// ── SCROLL-DRIVEN ENTRANCE (.fade-in) ────────────────────────────────────────
 .fade-in {
-    opacity: 0; 
-    transform: translateY(30px) scale(0.98);
-    will-change: transform, opacity;
-
-    animation: slide-up 1.2s var(--ease-spring) forwards;
+  opacity: 0;
+  transform: translateY(8px);
+  will-change: transform, opacity;
+  @include motion {
+    animation: fade-up $dur-slow $ease-in-out both;
     animation-timeline: view();
     animation-range: entry 5% cover 30%;
+  }
+}
+
+// §6.4 Staggered list entrance
+li, article {
+  @include motion {
+    animation: fade-up $dur-slow $ease-in-out both;
+    animation-delay: calc(var(--i, 0) * 50ms);
+
+    @for $n from 1 through 8 {
+      &:nth-child(#{$n}) { --i: #{$n - 1}; }
+    }
+  }
 }
