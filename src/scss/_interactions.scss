@@ -1,0 +1,255 @@
+// ════════════════════════════════════════════════════════════════════════════
+// asong56 Design Manual v0.3 — §9 Interaction Details
+// ════════════════════════════════════════════════════════════════════════════
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// ── §9.1 OPTICAL BLUR FIT ────────────────────────────────────────────────────
+// Pure-color icons read heavier on light backgrounds — halo corrects it
+.icon-optical {
+  filter: drop-shadow(0 0 6px oklch(60% 0.1 220 / 0.2));
+}
+
+// ── §9.2 LIQUID GLASS SWITCHER ───────────────────────────────────────────────
+.switcher {
+  position: relative;
+  display: flex;
+  background: oklch(95% 0.002 260 / 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: $radius-pill;
+  padding: 3px;
+
+  button {
+    flex: 1;
+    background: transparent;
+    border-radius: calc($radius-pill - 3px);
+    border: none;
+    z-index: $z-1;
+    @include motion { transition: color $dur-fast $ease-out; }
+  }
+
+  // Sliding indicator
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    width: calc(50% - 3px);
+    background: oklch(100% 0 0 / 0.9);
+    border-radius: calc($radius-pill - 3px);
+    box-shadow: 0 1px 4px oklch(0% 0 0 / 0.12);
+    @include motion { transition: transform $dur-slow $ease-spring; }
+  }
+
+  &[data-active='1']::after { transform: translateX(0); }
+  &[data-active='2']::after { transform: translateX(100%); }
+
+  @media (prefers-color-scheme: dark) {
+    background: oklch(20% 0.002 260 / 0.6);
+    &::after { background: oklch(30% 0 0 / 0.9); }
+  }
+}
+
+// ── §9.3 COLORFUL CURSOR BLINK ───────────────────────────────────────────────
+input, textarea, [contenteditable] {
+  caret-color: var(--color-accent);
+}
+
+// ── §9.4 PERSON NAME CURSOR ──────────────────────────────────────────────────
+[data-type='person'] { cursor: context-menu; }
+
+// ── §9.5 FILEPATH TRUNCATION ─────────────────────────────────────────────────
+// Truncates directory, preserves filename
+.filepath {
+  display: flex;
+  overflow: hidden;
+  font-family: $font-mono;
+  font-size: var(--text-xs);
+
+  span:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    direction: rtl;
+    unicode-bidi: plaintext;
+    color: var(--color-text-muted);
+  }
+
+  span:last-child {
+    flex-shrink: 0;
+    color: var(--color-text);
+  }
+}
+
+// ── §9.6 COLOR STRING PREVIEW ────────────────────────────────────────────────
+// Usage: <span class="color-swatch" style="--c: #ff6b6b">#ff6b6b</span>
+.color-swatch::before {
+  content: '';
+  display: inline-block;
+  width: 0.7em;
+  height: 0.7em;
+  border-radius: 2px;
+  background: var(--c);
+  margin-right: 0.3em;
+  vertical-align: middle;
+  box-shadow: inset 0 0 0 1px oklch(0% 0 0 / 0.15);
+}
+
+// ── §9.7 FOOTER NAV ACTIVE STATE ─────────────────────────────────────────────
+footer nav a {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  @include motion { transition: color $dur-fast $ease-out; }
+
+  &[aria-current='page'] {
+    color: var(--color-accent);
+    font-weight: 600;
+
+    &::after {
+      content: '';
+      display: block;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: currentColor;
+      margin: 2px auto 0;
+      @include motion { animation: dot-in $dur-normal $ease-spring forwards; }
+    }
+  }
+}
+
+// ── §9.8 OVERSCROLL (in _base.scss) ─────────────────────────────────────────
+// html { overscroll-behavior-y: contain; } — already in _base.scss
+
+// ── §9.9 ICON PICKER / SWATCH ANIMATION ─────────────────────────────────────
+.swatch {
+  @include motion {
+    transition:
+      background-color $dur-normal $ease-out,
+      transform        $dur-fast   $ease-spring,
+      box-shadow       $dur-fast   $ease-out;
+  }
+
+  &[aria-checked='true'] {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px currentColor;
+  }
+
+  &:hover:not([aria-checked='true']) { transform: scale(1.08); }
+}
+
+// ── §9.10 HIGHLIGHT BLOCK TRANSITION ─────────────────────────────────────────
+:target,
+[data-highlight] {
+  background-color: var(--color-accent-dim);
+  border-radius: $radius-sm;
+  @include motion { transition: background-color $dur-slow $ease-out; }
+}
+
+// ── §9.11 CONTACT LINKS ──────────────────────────────────────────────────────
+a[href^='mailto'],
+a[data-contact] {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  @include motion { transition: color $dur-fast $ease-out; }
+
+  &::after {
+    content: ' ↗';
+    font-size: 0.7em;
+    display: inline-block;
+    @include motion { transition: transform $dur-fast $ease-spring; }
+  }
+
+  &:hover {
+    color: var(--color-text);
+    &::after { transform: translate(2px, -2px); }
+  }
+}
+
+// ── §9.12 FOOTER EASTER EGG ──────────────────────────────────────────────────
+footer [data-easter] {
+  cursor: pointer;
+  user-select: none;
+
+  &:active {
+    @include motion { animation: easter $dur-normal $ease-spring; }
+  }
+}
+
+// ── §6.4 SVG SIGNATURE DRAW ──────────────────────────────────────────────────
+.signature path {
+  stroke-dasharray:  var(--path-length);
+  stroke-dashoffset: var(--path-length);
+  @include motion {
+    animation: draw $dur-page $ease-in-out 300ms forwards;
+  }
+}
+
+// ── §6.4 CAST ENDING ─────────────────────────────────────────────────────────
+.player[data-state='ended'] img {
+  @include motion {
+    animation: cast-fade $dur-page $ease-in 200ms forwards;
+  }
+}
+
+// ── §6.4 TWO-TOOLTIP TRANSITION ──────────────────────────────────────────────
+[role='tooltip'] {
+  @include motion {
+    &[data-state='leaving'] {
+      transition: opacity 100ms $ease-in, transform 100ms $ease-in;
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    &[data-state='entering'] {
+      transition: opacity 150ms $ease-in-out, transform 150ms $ease-in-out;
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+}
+
+// ── §11.6 CURSOR FOLLOWER (CSS only — JS handles coordinates) ────────────────
+.cursor-follower {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  border-radius: 50px;
+  background: var(--color-text);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: $z-5;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+
+  @include motion {
+    &[data-hover='true'] {
+      width: 24px;
+      height: 24px;
+      opacity: 0.15;
+      background: var(--color-accent);
+      transition:
+        width      $dur-normal $ease-spring,
+        height     $dur-normal $ease-spring,
+        opacity    $dur-normal $ease-out,
+        background $dur-fast   $ease-out;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) { display: none; }
+  @media (hover: none)                    { display: none; }
+}
+
+// ── §7.5 BLUR EDGE — scroll-driven ───────────────────────────────────────────
+@keyframes reduce-blur {
+  from { --blur: 8px; }
+  to   { --blur: 1px; }
+}
+
+.blur-edge {
+  filter: blur(var(--blur, 8px));
+  @include motion {
+    animation: reduce-blur linear both;
+    animation-timeline: scroll();
+    animation-range: 0px 80px;
+  }
+}
