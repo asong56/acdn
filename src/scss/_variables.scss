@@ -1,50 +1,135 @@
-$light-palette: (
-    'blue':        #007AFF,
-    'green':       #34C759,
-    'orange':      #FF9500,
-    'purple':      #AF52DE,
-    'gray':        #8E8E93,
-    'text-primary':#1C1C1E,
-    'text-sec':    #48484A,
-    'text-tert':   #6D6D72,
-    'bg':          #E5E5EA,
-    'card':        #FFFFFF,
-    'glass-bg':    rgba(255, 255, 255, 0.7),
-    'glass-border':rgba(255, 255, 255, 0.5)
-);
+// ════════════════════════════════════════════════════════════════════════════
+// asong56 Design Manual v0.3 — §12 Token Reference
+// ════════════════════════════════════════════════════════════════════════════
 
-$dark-palette: (
-    'blue':         #0A84FF,
-    'green':        #30D158,
-    'orange':       #FF9F0A,
-    'purple':       #BF5AF2,
-    'gray':         #8E8E93,
-    'text-primary': #FFFFFF,
-    'text-sec':     #8E8E93,
-    'text-tert':    #48484A,
-    'bg':           #000000,
-    'card':         #1C1C1E,
-    'glass-bg':     rgba(28, 28, 30, 0.7),
-    'glass-border': rgba(255, 255, 255, 0.1)
-);
+// ── §2 COLOR ─────────────────────────────────────────────────────────────────
+$accent-hue: 220;
+$accent-c:   0.18;
+$accent-l:   52%;
 
-$ease-spring: cubic-bezier(0.25, 1, 0.5, 1);
+// ── §3 TYPOGRAPHY ────────────────────────────────────────────────────────────
+$font-sans:
+  'Switzer',
+  'Open Sans',
+  ui-sans-serif,
+  'Segoe UI',
+  system-ui,
+  sans-serif;
 
+$font-serif:
+  'Gilda Display',
+  Georgia,
+  serif;
+
+$font-mono:
+  'Monaspace Neon',
+  ui-monospace,
+  'Cascadia Code',
+  monospace;
+
+$font-cjk:
+  'OPPO Sans',
+  'PingFang SC',
+  'Microsoft YaHei',
+  sans-serif;
+
+// ── §5 RADIUS ────────────────────────────────────────────────────────────────
+$radius-sm:   4px;
+$radius-base: 8px;
+$radius-lg:   12px;
+$radius-pill: 50px;
+
+// ── §6 EASING ────────────────────────────────────────────────────────────────
+$ease-out:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+$ease-in-out: cubic-bezier(0.0,  0.0,  0.2,  1.0);
+$ease-in:     cubic-bezier(0.4,  0.0,  1.0,  1.0);
+$ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1.0);
+$ease-snap:   cubic-bezier(0.6,  0.0,  0.0,  1.0);
+$ease-drop:   cubic-bezier(0.55, 0.0,  1.0,  0.45);
+
+// ── §6 DURATION ──────────────────────────────────────────────────────────────
+$dur-instant: 80ms;
+$dur-fast:    120ms;
+$dur-normal:  220ms;
+$dur-slow:    350ms;
+$dur-page:    600ms;
+$dur-tint:    800ms;
+
+// ── §7 Z-INDEX ───────────────────────────────────────────────────────────────
+$z-0: 0;   // normal flow
+$z-1: 1;   // sticky / hover lift
+$z-2: 2;   // dropdown / floating toolbar
+$z-3: 3;   // modal overlay
+$z-4: 4;   // modal content / drawer
+$z-5: 5;   // toast / tooltip
+
+// ── §10 BREAKPOINTS ──────────────────────────────────────────────────────────
+$bp-sm: 480px;
+$bp-md: 768px;
+$bp-lg: 1024px;
+$bp-xl: 1280px;
+
+// ── §4 CONTENT WIDTH ─────────────────────────────────────────────────────────
+$w-text: 68ch;
+$w-wide: 860px;
+$w-full: 1100px;
+
+// ── §11.6 CURSOR SVG ─────────────────────────────────────────────────────────
+// Light mode: dark circle (oklch 20%)
+$cursor-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='5' fill='%231a1a1a' fill-opacity='0.85'/%3E%3C/svg%3E") 8 8, pointer;
+// Dark mode: light circle (oklch 90%)
+$cursor-dark:  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='5' fill='%23e8e8e8' fill-opacity='0.85'/%3E%3C/svg%3E") 8 8, pointer;
+
+// ── §2 CSS CUSTOM PROPERTIES ─────────────────────────────────────────────────
 :root {
-    color-scheme: light;
-    @each $name, $color in $light-palette {
-        --#{$name}: #{$color};
-    }
-    --gap: clamp(16px, 2vw + 8px, 24px);
-    --ease-spring: #{$ease-spring};
+  color-scheme: light;
+
+  // §2.4 Semantic tokens — light mode
+  --color-bg:         oklch(98.5% 0.003 260);
+  --color-surface:    oklch(95%   0.004 260);
+  --color-border:     oklch(88%   0.005 260);
+  --color-text-muted: oklch(60%   0.008 260);
+  --color-text:       oklch(28%   0.008 260);
+  --color-accent:     oklch(52%   0.18  220);
+  --color-accent-dim: oklch(96%   0.04  220);
+
+  // §3.3 Type scale
+  --text-xs:   0.75rem;   // 12px
+  --text-sm:   0.875rem;  // 14px
+  --text-base: 1rem;      // 16px
+  --text-lg:   1.25rem;   // 20px
+  --text-xl:   1.625rem;  // 26px
+  --text-2xl:  2.5rem;    // 40px
+
+  // §7.2 Shadows
+  --shadow-sm: 0 1px 3px oklch(0% 0 0 / 0.05);
+  --shadow-md: 0 3px 12px oklch(0% 0 0 / 0.08), 0 1px 3px oklch(0% 0 0 / 0.04);
+  --shadow-lg: 0 8px 32px oklch(0% 0 0 / 0.10), 0 2px 8px oklch(0% 0 0 / 0.05);
+
+  // §2.5 Tinted background
+  --media-hue:    220;
+  --media-chroma: 0;
+
+  // Layout gap
+  --gap: clamp(16px, 2vw + 8px, 24px);
 }
 
 @media (prefers-color-scheme: dark) {
-    :root {
-        color-scheme: dark;
-        
-        @each $name, $color in $dark-palette {
-            --#{$name}: #{$color};
-        }
-    }
+  :root {
+    color-scheme: dark;
+
+    // §2.4 Semantic tokens — dark mode
+    --color-bg:         oklch(11%  0.003 260);
+    --color-surface:    oklch(16%  0.004 260);
+    --color-border:     oklch(24%  0.005 260);
+    --color-text-muted: oklch(60%  0.008 260);
+    --color-text:       oklch(88%  0.008 260);
+    --color-accent:     oklch(60%  0.16  220);
+    --color-accent-dim: oklch(18%  0.06  220);
+
+    // §7.2 Shadows — halved opacity in dark mode
+    --shadow-sm: 0 1px 3px  oklch(0% 0 0 / 0.025);
+    --shadow-md: 0 3px 12px oklch(0% 0 0 / 0.04),  0 1px 3px oklch(0% 0 0 / 0.02);
+    --shadow-lg: 0 8px 32px oklch(0% 0 0 / 0.05),  0 2px 8px oklch(0% 0 0 / 0.025);
+  }
 }
