@@ -12,7 +12,29 @@
 }
 
 // ── §7.4 MATERIAL MIXINS ─────────────────────────────────────────────────────
-@mixin glass {
+
+// std-thin: standard thin glass — header, panels, sticky chrome
+@mixin std-thin {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  will-change: backdrop-filter;
+  transform: translateZ(0);
+  isolation: isolate;
+  border: 1px solid var(--glass-border);
+}
+
+// liquid-glass: original formula — switch thumb, media controls, FABs
+@mixin liquid-glass {
+  background: var(--glass-bg);
+  backdrop-filter: saturate(200%) brightness(1.1) contrast(1.1);
+  -webkit-backdrop-filter: saturate(200%) brightness(1.1) contrast(1.1);
+  border: 1px solid var(--glass-border);
+}
+
+// glass-elevated: oklch-based with directional edge lights — README §7.4 full spec
+// Use when the surface needs an explicit depth cue (floating panels, modals)
+@mixin glass-elevated {
   --glass-l: 100%;
   --glass-a: 0.72;
 
