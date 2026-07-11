@@ -1,4 +1,3 @@
-```yml
 ---
 name: asong56 Design
 version: "v0.3"
@@ -61,8 +60,6 @@ components:
     rounded: "{rounded.lg}"
     padding: "{spacing.16}"
 ---
-
-```
 
 ## Overview
 
