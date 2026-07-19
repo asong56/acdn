@@ -1,7 +1,7 @@
 /* --- Switzer (Variable) --- */
 @font-face {
     font-family: 'Switzer';
-    src: url('https://cdn.jsdelivr.net/gh/asong56/acdn@release/assets/fonts/Switzer-Var.woff2') format('woff2-variations');
+    src: url('https://cdn.jsdelivr.net/gh/asong56/acdn@release/assets/fonts/Switzer-var.woff2') format('woff2-variations');
     font-weight: 400 600;
     font-style: normal;
     font-display: swap;
@@ -11,7 +11,7 @@
 /* font-family must match $font-mono token: 'Monaspace Neon' */
 @font-face {
     font-family: 'Monaspace Neon';
-    src: url('https://cdn.jsdelivr.net/gh/asong56/acdn@release/assets/fonts/Mona-Neon-Var.woff2') format('woff2-variations');
+    src: url('https://cdn.jsdelivr.net/gh/asong56/acdn@release/assets/fonts/Mona-Neon-var.woff2') format('woff2-variations');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -24,7 +24,7 @@
    The $font-serif token already lists 'Gilda Display' first, then 'Lora'. */
 @font-face {
     font-family: 'Lora';
-    src: url('https://cdn.jsdelivr.net/gh/asong56/acdn@release/assets/fonts/Lora-Variable.woff2') format('woff2-variations');
+    src: url('https://cdn.jsdelivr.net/gh/asong56/acdn@release/assets/fonts/Lora-var.woff2') format('woff2-variations');
     font-weight: 400 600;
     font-style: normal;
     font-display: swap;
@@ -32,7 +32,7 @@
 
 @font-face {
     font-family: 'Lora';
-    src: url('https://cdn.jsdelivr.net/gh/asong56/acdn@release/assets/fonts/Lora-Italic-Variable.woff2') format('woff2-variations');
+    src: url('https://cdn.jsdelivr.net/gh/asong56/acdn@release/assets/fonts/Lora-I-var.woff2') format('woff2-variations');
     font-weight: 400 600;
     font-style: italic;
     font-display: swap;
@@ -41,7 +41,7 @@
 /* --- OPPO Sans (Static) --- */
 @font-face {
     font-family: 'OPPO Sans';
-    src: url('https://cdn.jsdelivr.net/gh/asong56/acdn@release/assets/fonts/OPPOSans-4.0.woff2') format('woff2');
+    src: url('https://cdn.jsdelivr.net/gh/asong56/acdn@release/assets/fonts/OPPOSans.woff2') format('woff2');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
